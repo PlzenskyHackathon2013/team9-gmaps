@@ -3,38 +3,33 @@ function mapyToGoogle() {
 	$('.smap').each(function(i, map) {
 		var markers = new Array();
 		map = $(map);
+		var w = map.width();
+		var h = map.height();
 		var imgs = map.find('img');
-		var x0 = null;
-		var x1 = null;
-		var y0 = null;
-		var y1 = null;
+		var x = null;
+		var y = null;
+		var z;
+		var t;
 		imgs.each(function(j, img) {
 			img = $(img);
 			var src = img.attr('src');
-			if(src.indexOf(tiles)) {
-				if(x1 != null && y1 != null) {
-					return;
-				}
+			if(src.indexOf(tiles) >= 0) {
 				// dlazdice
 				var tid = src.substring(src.lastIndexOf('/') + 1).split('_');
+				z = tid[0];
 				var pos = img.position();
-				var pm = {
-					'scr':pos.left,
-					'pp':parseInt(tid[1], 16)
-				};
-				if(x0 == null) {
-					x0 = pm;
-				} else if(x1 == null && pm.scr != x0.scr) {
-					x1 = pm;
+				if(x == null || (pos.left != 0 && Math.abs(w/2 - x.scr) > Math.abs(w/2 - pos.left))) {
+					x = {
+						'scr':pos.left,
+						'pp':parseInt(tid[1], 16)
+					};
 				}
-				pm = {
-					'scr':(pos.top + img.height()),
-					'pp':parseInt(tid[2], 16)
-				};
-				if(y0 == null) {
-					y0 = pm;
-				} else if(y1 == null && pm.scr != y0.scr) {
-					y1 = pm;
+				t = pos.top + 256;
+				if(y == null || (pos.top != 0 && Math.abs(h/2 - y.scr) > Math.abs(h/2 - t))) {
+					y = {
+						'scr':t,
+						'pp':parseInt(tid[2], 16)
+					};
 				}
 			} else {
 				// znacka
@@ -46,21 +41,36 @@ function mapyToGoogle() {
 				});
 			}
 		});
-		//map = $(map);
-		var pp = {
-			'x':x0.pp + (map.width()/2-x0.scr)*((x1.pp-x0.pp)/(x1.scr-x0.scr)),
-			'y':y0.pp + (map.height()/2-y0.scr)*((y1.pp-y0.pp)/(y1.scr-y0.scr))
-			//'x':x0.pp + ((x1.pp-x0.pp)/(x1.scr-x0.scr))*(map.width()/2-x0.scr),
-			//'y':y0.pp + ((y1.pp-y0.pp)/(y1.scr-y0.scr))*(map.height()/2-y0.scr)
-		};
-		
 		////////
-		var ll = bExecuteScript('SMap.Coords.fromPP('+pp.x+', '+pp.y+').toWGS84(2)');
+		//var ll = bExecuteScript('SMap.Coords.fromPP('+pp.x+', '+pp.y+').toWGS84(2)');
+		var ll = bExecuteScript('('+duplicateMap.toString()+')('+map.width()+','+map.height()+','+z+',{pp:'+x.pp+',scr:'+x.scr+'}'+',{pp:'+y.pp+',scr:'+y.scr+'}'+',[]'+')');
 		//var ll = bExecuteScript('SMap.Coords.fromPP('+x1.pp+', '+y1.pp+').toWGS84(2)');
 		
 		//var ll = JAK.fromPP(pp.x, pp.y).toWGS84(2);
 		alert(ll);
 	});
+}
+
+function duplicateMap(w,h,z,cx,cy,m) {
+	var id = Math.round(100*Math.random());
+	var mc = document.createElement('div');
+	mc.style.width=w+'px';
+	mc.style.height=h+'px';
+	//mc.style.display = 'none';
+	mc.id = 'map-liberator-map-'+id;
+	document.getElementsByTagName('body')[0].appendChild(mc);
+	var c = SMap.Coords.fromPP(cx.pp,cy.pp);
+	var map = new SMap(JAK.gel('map-liberator-map-'+id), c, z);
+	map.addDefaultLayer(SMap.DEF_BASE).enable();
+	var res = document.createElement('span');
+	res.id = 'map-liberator-result-'+id;
+	res.className = 'map-liberator-result';
+	
+	var px = oc.toPixel(map, z);
+	
+	//var oc = new SMap.Pixel(w+cx.scr, h+cy.scr).toCoords(map);
+	var oc = new SMpa.Coords(c.x, c.y);
+	return(oc.toWGS84(2));
 }
 
 function bExecuteScript(txt) {
