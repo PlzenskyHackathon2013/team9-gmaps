@@ -1,4 +1,4 @@
-function mapyToGoogle() {
+function mapyToGoogle(callback) {
 	var tiles = 'mapserver.mapy.cz/'; // /https?:\/\//;
 	$('.smap').each(function(i, map) {
 		var markers = new Array();
@@ -47,7 +47,7 @@ function mapyToGoogle() {
 		//var ll = bExecuteScript('SMap.Coords.fromPP('+x1.pp+', '+y1.pp+').toWGS84(2)');
 		
 		//var ll = JAK.fromPP(pp.x, pp.y).toWGS84(2);
-		alert(ll);
+		callback(map.attr('id'), ll);
 	});
 }
 
@@ -85,7 +85,4 @@ function randomString(length) {
     return result;
 }
 
-function initMapyCZ() {
-	mapyToGoogle();
-}
-initMapyCZ();
+mapyToGoogle(toGoollback);
