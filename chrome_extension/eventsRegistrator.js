@@ -15,8 +15,9 @@ $('body').append('<div id="liberator_map_container"></div>');
 $('#liberator_map_container').dialog(
 		{
 			title: "In place map",
-			width: 400,
+			width: 600,
 			height: 400,
-			autoOpen: false
+			autoOpen: false,
+			zIndex: 10000
 		}
 	);
