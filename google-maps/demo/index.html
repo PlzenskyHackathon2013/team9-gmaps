@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Google map demo</title>
+	<script type="text/javascript" src="../googlemaps.js"></script>
+</head>
+<body>
+	<div id="canvas" style="width: 600px; height: 400px; background-color: lightgray;"></div>
+	<script type="text/javascript">
+		window.onload = function () {
+			googleMapsInject('googleMapsRenderer.render');
+			window.googleMapsRenderer = new GoogleMapsRenderer();
+			googleMapsRenderer.addMap({
+				canvas: document.getElementById('canvas'),
+				center: [-34.397, 150.644],
+				zoom: 8,
+				markers: [
+					{
+						title: 'marker 1',
+						position: [-34.397, 150.644]
+					},
+					{
+						title: 'marker 2',
+						position: [-34.664841, 150.836792]
+					}
+				]
+			});
+		};
+	</script>
+</body>
+</html>
