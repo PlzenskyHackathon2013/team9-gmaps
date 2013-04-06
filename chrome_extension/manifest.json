@@ -7,7 +7,7 @@
 
   "content_scripts": [ 
     {
-      "js": [ "jquery-1.9.1.min.js", "jquery-ui-1.10.2.custom.min.js", "googleEngine.js", "eventsRegistrator.js" ],
+      "js": [ "jquery-1.9.1.min.js", "jquery-ui-1.10.2.custom.min.js", "googleEngine.js", "eventsRegistrator.js", "script.js" ],
       "css": ["css/ui-lightness/jquery-ui-1.10.2.custom.min.css"],
       "run_at": "document_end",
       "matches":["http://*/*", "https://*/*"]
