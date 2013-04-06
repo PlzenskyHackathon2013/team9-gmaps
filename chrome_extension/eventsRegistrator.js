@@ -51,10 +51,13 @@ $('#liberator_map_container').dialog(
 
 
 function toGoollback(containerID, q) {
+	debugger;
+	$('#'+ containerID).empty();
 	bExecuteScript("("+toGoolbackShit.toString()+")(\""+containerID+"\",\"" +q +"\")");
 }
 
 function toGoolbackShit(containerID, q) {
+	debugger;
 	if (! window.googlbackShitMapaID) {
 		
 	  	window.googleMapaShitID = window.googleMapsRenderer.addMap({
