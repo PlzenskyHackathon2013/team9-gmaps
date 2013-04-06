@@ -69,6 +69,8 @@ function duplicateMap(w,h,z,cx,cy,m) {
 	var px = c.toPixel(map, z);
 	
 	var oc = new SMap.Pixel(px.x-w/2+cx.scr, px.y+h/2-cy.scr).toCoords(map);
+	map.$destructor();
+	mc.parentNode.removeChild(mc);
 	//var oc = new SMap.Coords(c.x, c.y);
 	return(oc.toWGS84(2));
 }
@@ -85,34 +87,5 @@ function randomString(length) {
 
 function initMapyCZ() {
 	mapyToGoogle();
-	/*
-	$.ajax({
-		type:'GET',
-		url:'http://api4.mapy.cz/loader.js',
-		async:false,
-		success:function(txt) {
-			var sc = $(document.createElement('script'));
-			sc.attr({
-				//'src':'http://api4.mapy.cz/loader.js',
-				'type':'text/javascript'
-			}).load(function() {
-			});
-			sc.text(txt);
-			$('head').append(sc);
-			//eval(txt);
-			Loader.load();
-			//JAK.Timekeeper.prototype.removeListener=function(a){};
-			alert("ok");
-		}
-	});
-	*/
-	/*
-	$.get(, function(data) {
-		
-		alert('a');
-		Loader.load();
-		alert('b');
-	});
-	//*/
 }
 initMapyCZ();
