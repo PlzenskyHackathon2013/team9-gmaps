@@ -53,7 +53,7 @@ $('#liberator_map_container').dialog(
 function toGoollback(containerID, q) {
 	debugger;
 	$('#'+ containerID).empty();
-	bExecuteScript("("+toGoolbackShit.toString()+")(\""+containerID.replace('"', '\\"')+"\",\"" +q +"\")");
+	bExecuteScript("window.googleMapsRenderer.loadOnRender = function() {("+toGoolbackShit.toString()+")(\""+containerID+"\",\"" +q.replace(/"/g, '\\"') +"\")};if(window.googleMapsRenderer.googleMapsReady) {window.googleMapsRenderer.loadOnRender();window.googleMapsRenderer.loadOnRender = null;}");
 }
 
 function toGoolbackShit(containerID, q) {

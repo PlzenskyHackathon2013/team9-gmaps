@@ -3,6 +3,8 @@
  * @constructor
  */
 window.GoogleMapsRenderer = function () {
+	
+	this.loadOnRender = null;
 
 	/**
 	 * @private
@@ -52,6 +54,10 @@ window.GoogleMapsRenderer = function () {
 		this.googleMapsReady = true;
 		for (var i = 0; i < this.mapsDefinitions.length; i++) {
 			this.renderMap(this.mapsDefinitions[i], i);
+		}
+		if(this.loadOnRender != null) {
+			this.loadOnRender();
+			this.loadOnRender = null;
 		}
 	};
 
@@ -161,6 +167,7 @@ window.GoogleMapsRenderer = function () {
 	 * @param callbackError
 	 */
 	this.geocode = function (address, callbackSuccess, callbackError) {
+		debugger;
 		this.geocoder = this.geocoder || new google.maps.Geocoder();
 		this.geocoder.geocode( { 'address': address }, function(results, status) {
 			if (status == google.maps.GeocoderStatus.OK) {
