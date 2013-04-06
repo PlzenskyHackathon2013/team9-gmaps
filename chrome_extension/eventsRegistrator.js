@@ -48,3 +48,34 @@ $('#liberator_map_container').dialog(
 			zIndex: 10000
 		}
 	);
+
+
+function toGoollback(containerID, q) {
+	bExecuteScript("("+toGoolbackShit.toString()+")(\""+containerID+"\",\"" +q +"\")");
+}
+
+function toGoolbackShit(containerID, q) {
+	if (! window.googlbackShitMapaID) {
+		
+	  	window.googleMapaShitID = window.googleMapsRenderer.addMap({
+			canvas: document.getElementById(containerID),
+			zoom: 8
+		});
+
+  	}	
+
+  	window.googleMapsRenderer.geocode(q, function (results) {
+			for (var i = 0; i < results.length; i++) {
+				var loc = results[i].geometry.location;
+				window.googleMapsRenderer.addMarker(window.googleMapaShitID, {
+					title: results[i].formatted_address,
+					position: [loc.lat(), loc.lng()]
+				});
+			}
+		}, function (status) {
+			alert('error occured because of '+ status);
+		}
+	);
+
+	return 0;
+}
