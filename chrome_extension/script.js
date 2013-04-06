@@ -66,10 +66,10 @@ function duplicateMap(w,h,z,cx,cy,m) {
 	res.id = 'map-liberator-result-'+id;
 	res.className = 'map-liberator-result';
 	
-	var px = oc.toPixel(map, z);
+	var px = c.toPixel(map, z);
 	
-	//var oc = new SMap.Pixel(w+cx.scr, h+cy.scr).toCoords(map);
-	var oc = new SMpa.Coords(c.x, c.y);
+	var oc = new SMap.Pixel(px.x-w/2+cx.scr, px.y+h/2-cy.scr).toCoords(map);
+	//var oc = new SMap.Coords(c.x, c.y);
 	return(oc.toWGS84(2));
 }
 
