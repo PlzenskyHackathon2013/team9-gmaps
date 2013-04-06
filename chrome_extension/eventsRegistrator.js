@@ -53,7 +53,7 @@ $('#liberator_map_container').dialog(
 function toGoollback(containerID, q) {
 	debugger;
 	$('#'+ containerID).empty();
-	bExecuteScript("("+toGoolbackShit.toString()+")(\""+containerID+"\",\"" +q +"\")");
+	bExecuteScript("("+toGoolbackShit.toString()+")(\""+containerID.replace('"', '\\"')+"\",\"" +q +"\")");
 }
 
 function toGoolbackShit(containerID, q) {
