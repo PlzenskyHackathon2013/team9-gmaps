@@ -6,9 +6,9 @@ window.GoogleMapsRenderer = function () {
 
 	/**
 	 * @private
-	 * @type {{maps: Array}}
+	 * @type {Array}
 	 */
-	this.mapsDefinitions = {maps: []};
+	this.mapsDefinitions = [];
 
 	/**
 	 * @private
@@ -25,14 +25,24 @@ window.GoogleMapsRenderer = function () {
 	this.googleMapsReady = false;
 
 	/**
+	 * @type {int}
+	 */
+	this.minAutoZoom = 10;
+
+	/**
 	 * adds map definition to registry and render map if google maps API client is ready to use
+	 * returns key identification of map in this object
+	 *
 	 * @param definition
+	 *
+	 * @return int
 	 */
 	this.addMap = function (definition) {
-		this.mapsDefinitions.maps.push(definition);
+		this.mapsDefinitions.push(definition);
 		if (this.googleMapsReady) {
-			this.renderMap(definition);
+			this.renderMap(definition, this.mapsDefinitions.length - 1);
 		}
+		return this.mapsDefinitions.length - 1;
 	}
 
 	/**
@@ -40,8 +50,8 @@ window.GoogleMapsRenderer = function () {
 	 */
 	this.render = function () {
 		this.googleMapsReady = true;
-		for (var i = 0; i < this.mapsDefinitions.maps.length; i++) {
-			this.renderMap(this.mapsDefinitions.maps[i]);
+		for (var i = 0; i < this.mapsDefinitions.length; i++) {
+			this.renderMap(this.mapsDefinitions[i], i);
 		}
 	};
 
@@ -54,33 +64,111 @@ window.GoogleMapsRenderer = function () {
 	 * https://developers.google.com/maps/documentation/javascript/reference#MapOptions
 	 *
 	 * @param definition
+	 * @param int mapId
 	 */
-	this.renderMap = function (definition) {
+	this.renderMap = function (definition, mapId) {
 		if (!this.googleMapsReady) {
 			throw 'Google Maps not ready yet';
 		}
 		var mapOptions = {
-			zoom: definition.zoom,
-			center: new google.maps.LatLng(definition.center[0], definition.center[1]),
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
+		if (typeof definition.zoom !== 'undefined') {
+			mapOptions.zoom = definition.zoom
+		}
+		if (typeof definition.center !== 'undefined') {
+			mapOptions.center = new google.maps.LatLng(definition.center[0], definition.center[1]);
+		}
 		definition.rendered = definition.rendered || {};
-		var map = new google.maps.Map(definition.canvas, mapOptions);
-		var markers = [];
+		var renderedDefinition = {
+			map: new google.maps.Map(definition.canvas, mapOptions),
+			markers: [],
+			bounds: new google.maps.LatLngBounds()
+		};
+		this.renderedMaps[mapId] = renderedDefinition;
 		if (typeof definition.markers !== 'undefined') {
 			for (var y = 0; y < definition.markers.length; y++) {
-				var md = definition.markers[y];
-				markers.push(new google.maps.Marker({
-					position: new google.maps.LatLng(md.position[0], md.position[1]),
-					map: map,
-					title: md.title || null
-				}));
+				this.addMarker(mapId, definition.markers[y]);
 			}
 		}
-		this.renderedMaps = {
-			map: map,
-			markers: markers
+	};
+
+	/**
+	 * returns key identification of marker in maps definition object
+	 * @private
+	 *
+	 * @param in renderedMapDefinitionId
+	 * @param markerDefinition
+	 *
+	 * @return int
+	 */
+	this.addMarker = function (renderedMapDefinitionId, markerDefinition) {
+		var rmd = this.renderedMaps[renderedMapDefinitionId];
+		var md = this.mapsDefinitions[renderedMapDefinitionId];
+		var options = {
+			position: new google.maps.LatLng(markerDefinition.position[0], markerDefinition.position[1]),
+			map: rmd.map,
+			title: markerDefinition.title || null
 		};
+		var marker = new google.maps.Marker(options);
+		rmd.bounds.extend(marker.position);
+		rmd.map.fitBounds(rmd.bounds);
+		rmd.markers.push(marker);
+		if (rmd.map.getZoom() > this.minAutoZoom) {
+			rmd.map.setZoom(this.minAutoZoom);
+		}
+		return rmd.markers.length - 1;
+	}
+
+	/**
+	 * if quite - it does not call map bounds recalculating
+	 *
+	 * @param {int} mapId
+	 * @param {bool} quite
+	 */
+	this.cleanMarkers = function (mapId, quite) {
+		var rmd = this.renderedMaps[mapId];
+		if (typeof rmd.markers !== 'undefined') {
+			for (var i = rmd.markers.length-1; i >= 0; i--) {
+				this.removeMarker(mapId, i, quite);
+			}
+		}
+	};
+
+	/**
+	 * if quite - it does not call map bounds recalculating
+	 *
+	 * @param {int} mapId
+	 * @param {int} markerId
+	 * @param {bool} quite
+	 */
+	this.removeMarker = function (mapId, markerId, quite) {
+		var rmd = this.renderedMaps[mapId];
+		rmd.markers[markerId].setMap(null);
+		rmd.bounds = new google.maps.LatLngBounds();
+		rmd.markers.splice(markerId, 1);
+		for (var i = 0; i < rmd.markers; i++) {
+			md.bounds.extend(rmd.markers[i].position);
+		}
+		if (!quite) {
+			rmd.map.fitBounds(rmd.bounds);
+		}
+	};
+
+	/**
+	 * @param string address
+	 * @param callbackSuccess
+	 * @param callbackError
+	 */
+	this.geocode = function (address, callbackSuccess, callbackError) {
+		this.geocoder = this.geocoder || new google.maps.Geocoder();
+		this.geocoder.geocode( { 'address': address }, function(results, status) {
+			if (status == google.maps.GeocoderStatus.OK) {
+				callbackSuccess(results);
+			} else {
+				callbackError(status);
+			}
+		});
 	};
 
 };

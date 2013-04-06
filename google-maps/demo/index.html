@@ -3,11 +3,34 @@
 <head>
 	<title>Google map demo</title>
 	<script type="text/javascript" src="../googlemaps.js"></script>
+	<style type="text/css">
+		div.container {
+			position: relative;
+			float: left; clear: none;
+			padding: 40px 20px 10px;
+		}
+		div.container .form {
+			position: absolute; top: 0; left: 20px;
+		}
+	</style>
 </head>
 <body>
-	<div id="canvas" style="width: 600px; height: 400px; background-color: lightgray;"></div>
+	<div class="container">
+		<div id="canvas" style="width: 600px; height: 400px; background-color: lightgray;"></div>
+	</div>
+	<div class="container">
+		<div class="form">
+			<input type="text" id="searchfield" />
+			<span>vymazat: <input type="checkbox" id="searchclean" /></span>
+			<input type="submit" value="hledej" onclick="search()" />
+		</div>
+		<div id="canvas-search" style="width: 600px; height: 400px; background-color: lightgray;">search me...</div>
+	</div>
 	<script type="text/javascript">
 		window.onload = function () {
+
+			// predefined maps
+
 			googleMapsInject('googleMapsRenderer.render');
 			window.googleMapsRenderer = new GoogleMapsRenderer();
 			googleMapsRenderer.addMap({
@@ -25,6 +48,32 @@
 					}
 				]
 			});
+
+			// geocoding search
+
+			window.geoCodingMapId = googleMapsRenderer.addMap({
+				canvas: document.getElementById('canvas-search'),
+				zoom: 8
+			});
+
+			window.search = function () {
+				var fld = document.getElementById('searchfield');
+				var fldClean = document.getElementById('searchclean');
+				if (fldClean.checked) {
+					googleMapsRenderer.cleanMarkers(geoCodingMapId, true);
+				}
+				googleMapsRenderer.geocode(fld.value, function (results) {
+					for (var i = 0; i < results.length; i++) {
+						var loc = results[i].geometry.location;
+						googleMapsRenderer.addMarker(geoCodingMapId, {
+							title: results[i].formatted_address,
+							position: [loc.lat(), loc.lng()]
+						});
+					}
+				}, function (status) {
+					alert('error occured because of '+ status);
+				});
+			}
 		};
 	</script>
 </body>
