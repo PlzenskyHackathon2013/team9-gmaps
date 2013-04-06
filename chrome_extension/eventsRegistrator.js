@@ -2,7 +2,6 @@ $('body').mouseup(function(e) {
 	if (! e.ctrlKey) { return; }
 	var selection = window.getSelection();
 	var text = selection.toString();
-	debugger;
 	bExecuteScript("("+shit.toString()+")(\""+text+"\")");
 
   	$('#liberator_map_container')
@@ -13,7 +12,6 @@ $('body').mouseup(function(e) {
 
 
 function shit(text) {
-	debugger;
 	if (! window.googleMapaID) {
 		
 	  	window.googleMapaID = window.googleMapsRenderer.addMap({
