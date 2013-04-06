@@ -1,11 +1,12 @@
 $('body').mouseup(function(e) {
 	if (! e.ctrlKey) { return; }
-	var text = window.getSelection().toString();
+	var selection = window.getSelection();
+	var text = selection.toString();
   	console.log(text);
 
   	$('#liberator_map_container').text(text);
   	$('#liberator_map_container').dialog('open');
-  	$('#liberator_map_container').dialog("option", "position", { my: "center", at: "center", of: window });
+  	$('#liberator_map_container').dialog("option", "position", { my: "top", at: "center", of: e });
 
 });
 
