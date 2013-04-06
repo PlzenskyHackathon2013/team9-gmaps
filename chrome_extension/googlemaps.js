@@ -197,7 +197,7 @@ window.googleMapsInject = function (callbackName) {
 	};
 
 	this.addScript = function (scriptURL, callbackName) {
-		scriptURL = ('https:' == document.location.protocol ? 'https' : 'http') + '://'+ scriptURL;
+		scriptURL = 'http' + '://'+ scriptURL;
 		scriptURL += '&callback='+callbackName;
 		var script = document.createElement("script")
 		script.type = "text/javascript";

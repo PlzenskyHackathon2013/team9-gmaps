@@ -73,26 +73,6 @@ function duplicateMap(w,h,z,cx,cy,m) {
 	return(oc.toWGS84(2));
 }
 
-function bExecuteScript(txt) {
-	var id = "map-liberator-result-"+Math.round(100*Math.random());
-	var src = 'var res='+txt+';';
-	src += 'var elm = document.createElement("span");';
-	src += 'elm.id = "'+id+'";';
-	src += 'elm.className=".map-liberator-result";';
-	src += 'elm.innerHTML = res;';
-	src += 'document.getElementsByTagName("body")[0].appendChild(elm);';
-	//alert(src);
-	//return(src);
-	//*
-	var sc = document.createElement('script');
-	sc.type='text/javascript';
-	sc.textContent =(src);
-	(document.head || document.documentElement).appendChild(sc);
-	sc.parentNode.removeChild(sc);
-	//*/
-	return($('#'+id).remove().text());
-}
-
 function randomString(length) {
 
     var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
