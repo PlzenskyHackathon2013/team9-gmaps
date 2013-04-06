@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "Map Liberator",
+  "description": "Map extension for freely choose between map engines",
+  "version": "1.0",
+
+  "content_scripts": [ 
+    {
+      "js": [ "jquery-1.9.1.min.js", "googleEngine.js" ],
+      "run_at": "document_end",
+      "matches":["http://*/*", "https://*/*"]
+    } 
+  ],
+
+  "browser_action": {
+    "default_icon": "icon.png"
+  }
+}
